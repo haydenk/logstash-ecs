@@ -1,0 +1,66 @@
+[
+    {
+        "name": "logstash-arcsight",
+        "image": "068858810320.dkr.ecr.us-west-2.amazonaws.com/cms/logstash:latest",
+        "essential": true,
+        "cpu": 2048,
+        "memory": 2046,
+        "compatibilities": [
+            "EC2"
+        ],
+        "portMappings": [
+            {
+                "hostPort": 1337,
+                "protocol": "tcp",
+                "containerPort": 1337
+            },
+            {
+                "hostPort": 9600,
+                "protocol": "tcp",
+                "containerPort": 9600
+            },
+            {
+                "hostPort": 5044,
+                "protocol": "tcp",
+                "containerPort": 5044
+            },
+            {
+                "hostPort": 5000,
+                "protocol": "udp",
+                "containerPort": 5000
+            }
+        ],
+        "environment": [
+            {
+                "name": "ES_AWS_REGION",
+                "value": "us-west-2"
+            },
+            {
+                "name": "ES_HOST",
+                "value": "vpc-csmelastic-eqob6q5sco2ba2ryt6pao57z3y.us-west-2.es.amazonaws.com"
+            },
+            {
+                "name": "TCP_LISTENER_PORT",
+                "value": "1337"
+            }
+        ],
+        "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "/ecs/logstash_task",
+                "awslogs-region": "us-west-2",
+                "awslogs-stream-prefix": "ecs"
+            }
+        },
+        "healthCheck": {
+            "retries": 3,
+            "command": [
+                "CMD-SHELL",
+                "curl -f http://localhost:9600 || exit 1"
+            ],
+            "timeout": 5,
+            "interval": 30,
+            "startPeriod": 40
+        }
+    }
+]
